@@ -48,7 +48,7 @@ const tempWatchedData = [
 ];
 
 const average = (arr: any) =>
-  arr.reduce(({ acc, cur, i, arr }: any) => acc + cur / arr.length, 0);
+  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
   const [query, setQuery] = useState("");
