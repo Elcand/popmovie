@@ -70,35 +70,34 @@ function Search() {
   );
 }
 
-function NumResults() {
+function NumResults({ movies }: any) {
   return (
     <p className="num-results">
-      Found <strong>x</strong> results
+      Found <strong>{movies.length}</strong> results
     </p>
   );
 }
 
-function NavBar() {
+function NavBar({ movies }: any) {
   return (
     <nav className="nav-bar">
       <Logo />
       <Search />
-      <NumResults />
+      <NumResults movies={movies} />
     </nav>
   );
 }
 
-function Main() {
+function Main({ movies }: any) {
   return (
     <main className="main">
-      <MovieList />
+      <MovieList movies={movies} />
       <WatchedList />
     </main>
   );
 }
 
-function MovieList() {
-  const [movies, setMovies] = useState(tempMovieData);
+function MovieList({ movies }: any) {
   const [isOpen1, setIsOpen1] = useState(true);
 
   return (
@@ -111,7 +110,7 @@ function MovieList() {
       </button>
       {isOpen1 && (
         <ul className="list">
-          {movies?.map((movie) => (
+          {movies?.map((movie: any) => (
             <li key={movie.imdbID}>
               <img src={movie.Poster} alt={`${movie.Title} poster`} />
               <h3>{movie.Title}</h3>
@@ -201,10 +200,13 @@ const average = (arr: any) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
+
   return (
     <>
-      <NavBar />
-      <Main />
+      <NavBar movies={movies} />
+      <Main movies={movies} />
     </>
   );
 }
