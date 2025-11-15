@@ -103,7 +103,7 @@ function MovieItem({ movie }: any) {
 
 function MovieList({ movies }: any) {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {movies?.map((movie: any, index: number) => (
         <MovieItem key={index} movie={movie} />
       ))}
@@ -174,14 +174,14 @@ function WatchedSummary({ watched }: any) {
   );
 }
 
-function BoxMovies({ children }: any) {
+function BoxMovies({ children, element }: any) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="box">
       <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
         {isOpen ? "–" : "+"}
       </button>
-      {isOpen && children}
+      {isOpen && (children || element)}
     </div>
   );
 }
@@ -189,17 +189,42 @@ function BoxMovies({ children }: any) {
 const average = (arr: any) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+function Loader() {
+  return (
+    <div className="loader">
+      <div className="loading-bar">
+        <div className="bar"></div>
+      </div>
+    </div>
+  );
+}
+
 const API_KEY = "786a5e52";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
 
-  //  contoh sync
+  // //  contoh implementasi sync
+  // useEffect(() => {
+  //   fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`)
+  //     .then((res) => res.json())
+  //     .then((data) => setMovies(data.Search));
+  // }, []);
+
+  //  contoh implementasi async
   useEffect(() => {
-    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`)
-      .then((res) => res.json())
-      .then((data) => setMovies(data.Search));
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+    fetchMovies();
   }, []);
 
   return (
@@ -211,9 +236,9 @@ export default function App() {
       </NavBar>
 
       <Main>
-        <BoxMovies>
-          <MovieList movies={movies} />
-        </BoxMovies>
+        <BoxMovies
+          element={isLoading ? <Loader /> : <MovieList movies={movies} />}
+        />
 
         <BoxMovies>
           <WatchedSummary watched={watched} />
