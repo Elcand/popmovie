@@ -199,12 +199,22 @@ function Loader() {
   );
 }
 
+function ErrorMessage({ message }: any) {
+  return (
+    <div className="error">
+      <span>⛔</span>
+      <p>{message}</p>
+    </div>
+  );
+}
+
 const API_KEY = "786a5e52";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // //  contoh implementasi sync
   // useEffect(() => {
@@ -216,13 +226,25 @@ export default function App() {
   //  contoh implementasi async
   useEffect(() => {
     async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`
+        );
+
+        if (!res.ok)
+          throw new Error("Something went wrong with fetching movies");
+
+        const data = await res.json();
+
+        if (data.Response === "False") throw new Error("Movie not found");
+
+        setMovies(data.Search);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchMovies();
   }, []);
@@ -236,9 +258,11 @@ export default function App() {
       </NavBar>
 
       <Main>
-        <BoxMovies
-          element={isLoading ? <Loader /> : <MovieList movies={movies} />}
-        />
+        <BoxMovies>
+          {isLoading && <Loader />}
+          {error && <ErrorMessage message={error} />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+        </BoxMovies>
 
         <BoxMovies>
           <WatchedSummary watched={watched} />
