@@ -84,9 +84,9 @@ function Main({ children }: any) {
   return <main className="main">{children}</main>;
 }
 
-function MovieItem({ movie }: any) {
+function MovieItem({ movie, onSelectMovieId }: any) {
   return (
-    <li key={movie.imdbID}>
+    <li key={movie.imdbID} onClick={() => onSelectMovieId(movie.imdbID)}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
@@ -99,11 +99,15 @@ function MovieItem({ movie }: any) {
   );
 }
 
-function MovieList({ movies }: any) {
+function MovieList({ movies, onSelectMovieId }: any) {
   return (
     <ul className="list list-movies">
       {movies?.map((movie: any, index: number) => (
-        <MovieItem key={index} movie={movie} />
+        <MovieItem
+          key={index}
+          movie={movie}
+          onSelectMovieId={onSelectMovieId}
+        />
       ))}
     </ul>
   );
@@ -214,6 +218,11 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("transformers");
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+  function handleSelectMovieId(id: any) {
+    setSelectedMovieId(id);
+  }
 
   // //  contoh implementasi sync
   // useEffect(() => {
@@ -230,7 +239,7 @@ export default function App() {
         setError("");
 
         const res = await fetch(
-          `https://www.omdbapi.com/?s=${tempQuery}&apikey=${API_KEY}`
+          `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
         );
 
         if (!res.ok)
@@ -269,7 +278,9 @@ export default function App() {
         <BoxMovies>
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !error && (
+            <MovieList movies={movies} onSelectMovieId={handleSelectMovieId} />
+          )}
         </BoxMovies>
 
         <BoxMovies>
