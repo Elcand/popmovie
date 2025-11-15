@@ -56,9 +56,7 @@ function Logo() {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState("");
-
+function Search({ query, setQuery }: any) {
   return (
     <input
       className="search"
@@ -215,6 +213,9 @@ export default function App() {
   const [watched, setWatched] = useState(tempWatchedData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+
+  // const tempQuery = "p";
 
   // //  contoh implementasi sync
   // useEffect(() => {
@@ -225,11 +226,19 @@ export default function App() {
 
   //  contoh implementasi async
   useEffect(() => {
+    if (query.length < 3) {
+      setMovies([]);
+      setError("");
+      return;
+    }
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError("");
+
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`
+          `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
         );
 
         if (!res.ok)
@@ -240,20 +249,22 @@ export default function App() {
         if (data.Response === "False") throw new Error("Movie not found");
 
         setMovies(data.Search);
+        setError("");
       } catch (err: any) {
         setError(err.message);
+        setMovies([]);
       } finally {
         setIsLoading(false);
       }
     }
     fetchMovies();
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
         <Logo />
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
