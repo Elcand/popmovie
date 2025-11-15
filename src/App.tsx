@@ -213,9 +213,7 @@ export default function App() {
   const [watched, setWatched] = useState(tempWatchedData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-
-  const tempQuery = query || "transformers";
+  const [query, setQuery] = useState("transformers");
 
   // //  contoh implementasi sync
   // useEffect(() => {
@@ -250,6 +248,11 @@ export default function App() {
       } finally {
         setIsLoading(false);
       }
+    }
+    if (query.length < 3) {
+      setMovies([]);
+      setError("");
+      return;
     }
     fetchMovies();
   }, [query]);
