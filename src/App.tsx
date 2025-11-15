@@ -189,6 +189,35 @@ function BoxMovies({ children, element }: any) {
 }
 
 function MovieDetails({ selectedId, onCloseMovie }: any) {
+  const [movie, setMovie] = useState<any>({});
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    userRating,
+    Plot: plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = movie;
+
+  console.log(title, year);
+
+  useEffect(() => {
+    async function getMovieDetails() {
+      const res = await fetch(
+        `https://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
+      );
+      const data = await res.json();
+      console.log(data);
+      setMovie(data);
+    }
+    getMovieDetails();
+  }, [selectedId]);
+
   return (
     <div className="details">
       <button className="btn-back" onClick={onCloseMovie}>
