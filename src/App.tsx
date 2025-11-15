@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const tempMovieData = [
   {
@@ -189,9 +189,18 @@ function BoxMovies({ children }: any) {
 const average = (arr: any) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const API_KEY = "786a5e52";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+
+  //  contoh sync
+  useEffect(() => {
+    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=transformers`)
+      .then((res) => res.json())
+      .then((data) => setMovies(data.Search));
+  }, []);
 
   return (
     <>

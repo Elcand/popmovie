@@ -6,7 +6,7 @@ import StarRating from "./StarRating.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* <App /> */}
-    <StarRating />
+    <App />
+    {/* <StarRating /> */}
   </StrictMode>
 );
