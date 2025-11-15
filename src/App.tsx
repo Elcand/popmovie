@@ -188,6 +188,17 @@ function BoxMovies({ children, element }: any) {
   );
 }
 
+function MovieDetails({ selectedId, onCloseMovie }: any) {
+  return (
+    <div className="details">
+      <button className="btn-back" onClick={onCloseMovie}>
+        x
+      </button>
+      {selectedId}
+    </div>
+  );
+}
+
 const average = (arr: any) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
@@ -221,7 +232,11 @@ export default function App() {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
 
   function handleSelectMovieId(id: any) {
-    setSelectedMovieId(id);
+    setSelectedMovieId((selectedId) => (id === selectedId ? null : id));
+  }
+
+  function handleCloseMovie() {
+    setSelectedMovieId(null);
   }
 
   // //  contoh implementasi sync
@@ -284,8 +299,17 @@ export default function App() {
         </BoxMovies>
 
         <BoxMovies>
-          <WatchedSummary watched={watched} />
-          <WatchedList watched={watched} />
+          {selectedMovieId ? (
+            <MovieDetails
+              selectedId={selectedMovieId}
+              onCloseMovie={handleCloseMovie}
+            />
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedList watched={watched} />
+            </>
+          )}
         </BoxMovies>
       </Main>
     </>
