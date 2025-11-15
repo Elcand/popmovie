@@ -215,7 +215,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
 
-  // const tempQuery = "p";
+  const tempQuery = query || "transformers";
 
   // //  contoh implementasi sync
   // useEffect(() => {
@@ -226,19 +226,13 @@ export default function App() {
 
   //  contoh implementasi async
   useEffect(() => {
-    if (query.length < 3) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError("");
 
         const res = await fetch(
-          `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
+          `https://www.omdbapi.com/?s=${tempQuery}&apikey=${API_KEY}`
         );
 
         if (!res.ok)
