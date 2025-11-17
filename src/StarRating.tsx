@@ -66,12 +66,13 @@ function Star({
   );
 }
 
-export default function StarRating({ max = 5, size = 20 }: any) {
+export default function StarRating({ max = 5, size = 20, onSetRating }: any) {
   const [rating, setRating] = useState(0);
   const [tempRating, setTempRating] = useState(0);
 
   function handleRating(rating: any) {
     setRating(rating);
+    onSetRating(rating);
   }
 
   return (
