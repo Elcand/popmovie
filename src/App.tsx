@@ -379,13 +379,15 @@ export default function App() {
 
   //  contoh implementasi async
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError("");
 
         const res = await fetch(
-          `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
+          `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`,
+          { signal: controller.signal }
         );
 
         if (!res.ok)
@@ -398,6 +400,7 @@ export default function App() {
         setMovies(data.Search);
         setError("");
       } catch (err: any) {
+        if (err.name === "AbortError") return;
         setError(err.message);
         setMovies([]);
       } finally {
@@ -410,6 +413,9 @@ export default function App() {
       return;
     }
     fetchMovies();
+    return function () {
+      controller.abort();
+    };
   }, [query]);
 
   return (
