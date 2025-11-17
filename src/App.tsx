@@ -255,6 +255,12 @@ function MovieDetails({
   useEffect(() => {
     if (!title) return;
     document.title = `PopMovie | ${title}`;
+
+    // clean up function/ unmount function
+    return function () {
+      document.title = "PopMovie";
+      console.log(`cleanup ${title}`);
+    };
   }, [title]);
 
   return (
