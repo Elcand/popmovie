@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -190,6 +191,8 @@ function BoxMovies({ children, element }: any) {
 
 function MovieDetails({ selectedId, onCloseMovie }: any) {
   const [movie, setMovie] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     Title: title,
     Year: year,
@@ -204,26 +207,59 @@ function MovieDetails({ selectedId, onCloseMovie }: any) {
     Genre: genre,
   } = movie;
 
-  console.log(title, year);
-
   useEffect(() => {
     async function getMovieDetails() {
+      setIsLoading(true);
       const res = await fetch(
         `https://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
       );
       const data = await res.json();
-      console.log(data);
       setMovie(data);
+      setIsLoading(false);
     }
     getMovieDetails();
   }, [selectedId]);
 
   return (
     <div className="details">
-      <button className="btn-back" onClick={onCloseMovie}>
-        x
-      </button>
-      {selectedId}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <header>
+            <button className="btn-back" onClick={onCloseMovie}>
+              x
+            </button>
+            <img src={poster} alt={`${title} poster`} />
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                <span>📅</span>
+                <span>{year}</span>
+              </p>
+              <p>
+                <span>⌛</span>
+                <span>{runtime}</span>
+              </p>
+              <p>
+                <span>🌟</span>
+                <span>{imdbRating}</span>
+              </p>
+            </div>
+          </header>
+          <section>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Genre: {genre}</p>
+            <p>Actors: {actors}</p>
+            <p>Directed by:{director}</p>
+            <div className="rating">
+              <StarRating max={10} size={24} />
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }
